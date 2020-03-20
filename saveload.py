@@ -44,6 +44,14 @@ def readRootDTL(string):
         elif (string[i]==")"):
             root = id3.Vertex(string[2:i])
             break
+    if string[len(string)-1]==")" and string[len(string)-2]==")":
+        j = len(string)-3
+        while(string[j]!="("):
+            j -= 1
+        data = string[j+1:len(string)-2].split(",")
+        target = id3.Vertex(data[1])
+        edge = id3.Edge(data[0],target)
+        root.add_edge(edge)
     return root
 
 
