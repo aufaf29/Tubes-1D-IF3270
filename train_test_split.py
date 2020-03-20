@@ -18,7 +18,15 @@ def ConfusionMatrixID3(result_tree, test_iris):
     return confusion_matrix(target_results, results, labels=['Virginica', 'Versicolor', 'Setosa'])
 
 def ConfusionMatrixMLP(result_model, test_iris):
-    pass
+    attributes = ['sepal.length', 'sepal.width', 'petal.length', 'petal.width']
+    result_labels = ['Virginica', 'Versicolor', 'Setosa']
+    result_column_name = 'variety'
+    target_results = mlp.get_results(result_model, attributes, result_labels, result_column_name, test_iris)[0]
+
+    results = mlp.get_results(result_model, attributes, result_labels, result_column_name, test_iris)[1]
+
+    # membuat confusion matrix dari sklearn
+    return confusion_matrix(target_results, results, labels=['Virginica', 'Versicolor', 'Setosa'])
 
 def ID3(df):
     # memisahkan data training dan testing dengan perbandingan 9:1
@@ -34,7 +42,10 @@ def ID3(df):
 
     # menampilkan tree hasil
     id3.print_tree(result_tree, 0)
-
+    print('Akurasi :')
+    print(result_accuracy)
+    print('Confussion Matrix untuk Virginica, Versicolor, Setosa :')
+    print(ConfusionMatrixID3(result_tree, test_iris))
 
 def MLP(df, num_perceptrons_in_layer, max_iteration, error_threshold, learning_rate, batch_size):
     # memisahkan data training dan testing dengan perbandingan 9:1
@@ -50,3 +61,7 @@ def MLP(df, num_perceptrons_in_layer, max_iteration, error_threshold, learning_r
 
     # menampilkan tree hasil
     result_model.print_model()
+    print('Akurasi :')
+    print(result_accuracy)
+    print('Confussion Matrix untuk Virginica, Versicolor, Setosa :')
+    print(ConfusionMatrixID3(result_model, test_iris))

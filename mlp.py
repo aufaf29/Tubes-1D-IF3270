@@ -207,6 +207,38 @@ def count_error(model, attributes, result_labels, result_column_name, df):
             num_error += 1
     return num_error
 
+def get_results(model, attributes, result_labels, result_column_name, df):
+    results = [[],[]]
+    num_error = 0
+    # ACCURACY CHECK
+    for x in range(len(df.index)):
+        data_row = df.iloc[x]
+        # set input values
+        for i in range(len(attributes)):
+            model.get_perceptron(0, i).set_input_value(data_row.get(attributes[i]))
+        # set target values
+        for i in range(len(result_labels)):
+            if data_row.get(result_column_name) != model.get_perceptron(model.num_layer-1, i).label:
+                model.get_perceptron(model.num_layer-1, i).set_target(0)
+            else:
+                model.get_perceptron(model.num_layer-1, i).set_target(1)
+        
+        model.feedForward()
+
+        # Choose output label with largest output value
+        idx_best = 0
+        for i in range(len(result_labels)):
+            if model.get_perceptron(model.num_layer-1, i).output > model.get_perceptron(model.num_layer-1, idx_best).output:
+                idx_best = i
+
+        results[0].append(data_row.get(result_column_name))
+        results[1].append(model.get_perceptron(model.num_layer-1, idx_best).label)
+        
+        #print(model.get_perceptron(model.num_layer-1, idx_best).label)
+        # Set error if output is not desired label
+        # if model.get_perceptron(model.num_layer-1, idx_best).label != data_row.get(result_column_name):
+        #     num_error += 1
+    return results
 
 def count_accuracy(model, df_validation):
 
