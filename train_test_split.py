@@ -46,6 +46,8 @@ def ID3(df, pruning, is_result_continuous):
     print('Confussion Matrix untuk Virginica, Versicolor, Setosa :')
     print(ConfusionMatrixID3(result_tree, test_iris))
 
+    return result_tree
+
 def MLP(df, num_perceptrons_in_layer, max_iteration, error_threshold, learning_rate, batch_size):
     # memisahkan data training dan testing dengan perbandingan 9:1
     separator_iris = round((9/10)*len(df.index))
@@ -64,3 +66,5 @@ def MLP(df, num_perceptrons_in_layer, max_iteration, error_threshold, learning_r
     print(result_accuracy)
     print('Confussion Matrix untuk Virginica, Versicolor, Setosa :')
     print(ConfusionMatrixMLP(result_model, test_iris))
+
+    return result_model
