@@ -207,6 +207,22 @@ def count_error(model, attributes, result_labels, result_column_name, df):
             num_error += 1
     return num_error
 
+
+def count_accuracy(model, df_validation):
+
+    attributes = df_validation.columns.values.tolist()
+    result_column_name = attributes.pop()
+    results = set(df_validation.iloc[:,-1].tolist())
+    result_labels = []
+    for result in results:
+        result_labels.append(result)
+
+    num_error = count_error(model, attributes, result_labels, result_column_name, df_validation)
+    error_percentage = float(num_error) / len(df_validation.index)
+    accuracy = 1 - error_percentage
+
+    return accuracy
+
 # MAIN
 
 def MLP(df, num_perceptrons_in_layer, max_iteration, error_threshold, learning_rate, batch_size):
@@ -300,8 +316,8 @@ def MLP(df, num_perceptrons_in_layer, max_iteration, error_threshold, learning_r
         cummulative_error = count_error(model, attributes, result_labels, result_column_name, df)
         error = float(cummulative_error) / len(df.index)
 
-    print('Backpropagation finished, calculating accuracy...')
-    print('Final model has accuracy of', 1-error, "percent.")
+    print('Backpropagation finished.')
+    #print('Final model has accuracy of', 1-error, "percent.")
 
     #model.print_model()
     return model

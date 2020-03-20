@@ -469,7 +469,8 @@ def prune(tree, validation_data, validation_dataframe, rules, isContinuous):
                 unmatched = False
                 for i in range(len(keys)-1):
                     if (keys[i] in data.attributes):
-                        if (datum[data.attributes.index(keys[i])] != values[i]):
+                        comp_string = str(datum[data.attributes.index(keys[i])]) + " " + values[i]
+                        if (not eval(comp_string)):
                             unmatched = True
                 if not unmatched:
                     results.append(rule['result'])
@@ -490,7 +491,6 @@ def prune(tree, validation_data, validation_dataframe, rules, isContinuous):
                         cummulative_error += 1
             return cummulative_error
 
-    rules = []
     make_rules(tree, {})
     new_rules = pruning(validation_data, validation_dataframe, rules, isContinuous)
     final = rules_to_tree(new_rules)
@@ -505,6 +505,59 @@ def print_tree(tree,idx):
                     print("    ", end ='')
             print("++++ (", tree.edges[i].name,")", end = ' ')
             print_tree(tree.edges[i].target_vertex,idx+1)
+
+def count_accuracy(tree, rules_array, validation_dataframe, isContinuous):
+
+    def make_rules(tree, rule):
+        if(len(tree.edges) > 0):
+            for i in range(len(tree.edges)):
+                newrule = rule.copy()
+                newrule[tree.name] = tree.edges[i].name
+                make_rules(tree.edges[i].target_vertex,newrule)
+        else:
+            rule["result"] = tree.name
+            rules_array.append(rule)
+
+    def predict_results(data, rules):
+        results = []
+        for datum in data.data_values:
+            for rule in rules:
+                keys = list(rule.keys())
+                values = list(rule.values())
+                unmatched = False
+                for i in range(len(keys)-1):
+                    if (keys[i] in data.attributes):
+                        comp_string = str(datum[data.attributes.index(keys[i])]) + " " + values[i]
+                        if (not eval(comp_string)):
+                            unmatched = True
+                if not unmatched:
+                    results.append(rule['result'])
+        return results
+    
+    def count_errors(r1, r2, isContinuous):
+        if len(r1) != len(r2):
+            return len(r2)
+        else:
+            cummulative_error = 0
+            if isContinuous:
+                for i in range(len(r1)):
+                    cummulative_error += (r1[i] - r2[i])*(r1[i] - r2[i])/2
+            else:
+                for i in range(len(r1)):
+                    if (r1[i] != r2[i]):
+                        cummulative_error += 1
+            return cummulative_error
+    
+    make_rules(tree, {})
+
+    data = Data(validation_dataframe)
+    results = predict_results(data, rules_array)
+    target_results = data.data_values[:, data.column-1]
+
+    num_errors = count_errors(results, target_results, isContinuous)    
+    error_percentage = float(num_errors) / len(validation_dataframe.index)
+    accuracy = 1 - error_percentage
+    return accuracy
 
 #df_iris = pandas.read_csv('iris.csv')
 #separator_iris = round((4/5)*len(df_iris.index))
