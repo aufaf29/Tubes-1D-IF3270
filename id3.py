@@ -511,8 +511,48 @@ def print_tree(tree,idx):
             print("++++ (", tree.edges[i].name,")", end = ' ')
             print_tree(tree.edges[i].target_vertex,idx+1)
 
-def count_accuracy(tree, rules_array, validation_dataframe, isContinuous):
+def get_results(tree, rules_array, validation_dataframe, isContinuous):
+    def make_rules(tree, rule):
+        if(len(tree.edges) > 0):
+            for i in range(len(tree.edges)):
+                newrule = rule.copy()
+                newrule[tree.name] = tree.edges[i].name
+                make_rules(tree.edges[i].target_vertex,newrule)
+        else:
+            rule["result"] = tree.name
+            rules_array.append(rule)
 
+    def predict_results(data, rules):
+        results = []
+        for datum in data.data_values:
+            for rule in rules:
+                keys = list(rule.keys())
+                values = list(rule.values())
+                unmatched = False
+                for i in range(len(keys)-1):
+                    if (keys[i] in data.attributes):
+                        comp_string = str(datum[data.attributes.index(keys[i])]) + " " + values[i]
+                        if (not eval(comp_string)):
+                            unmatched = True
+                if not unmatched:
+                    results.append(rule['result'])
+        return results
+    
+    make_rules(tree, {})
+
+    array_results = [[],[]]
+
+    data = Data(validation_dataframe)
+
+    results = predict_results(data, rules_array)
+    array_results[0] = results
+
+    target_results = data.data_values[:, data.column-1]
+    array_results[1] = target_results
+
+    return array_results
+
+def count_accuracy(tree, rules_array, validation_dataframe, isContinuous):
     def make_rules(tree, rule):
         if(len(tree.edges) > 0):
             for i in range(len(tree.edges)):
