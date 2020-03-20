@@ -99,7 +99,6 @@ def get_global_entropy(data):
 def get_data_certain_value (dataframe, attribute_name, value_name):
     new_dataframe = dataframe.copy()
     for i in range (len(new_dataframe)):
-        print(new_dataframe[attribute_name][i], "---", value_name)
         if (isinstance(new_dataframe[attribute_name][i], (str))):
             if(new_dataframe[attribute_name][i] != value_name):
                 new_dataframe = new_dataframe.drop(i)

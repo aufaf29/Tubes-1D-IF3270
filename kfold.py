@@ -29,7 +29,7 @@ def ID3(k, df, pruning, is_result_continuous):
         print("-------------------- MODEL", i+1, "--------------------")
 
         # We use the whole training data for pruning validation
-        result_tree = id3.ID3(df, df_training, df_training, pruning)
+        result_tree = id3.ID3(df, df_training, df_validation, pruning)
         trees.append(result_tree)
 
         result_accuracy = id3.count_accuracy(result_tree, [], df_validation, is_result_continuous)
