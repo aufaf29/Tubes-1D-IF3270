@@ -20,38 +20,37 @@ def saveDTL(tree, filename):
 def readDTL(string, root):
     start_idx = 0
     if(len(string) <= 1):
-        return root
+        return root,string
     for i in range(len(string)-1):
         if(string[i]=="(" or string[i]==")"):
             data = string[start_idx:i].split(",")
-            target = id3.Vertex(data[1])
-            edge = id3.Edge(data[0],target)
-            root.add_edge(edge)
+            if(len(data)==2):
+                target = id3.Vertex(data[1])
+                edge = id3.Edge(data[0],target)
+                root.add_edge(edge)
             if(string[i]=="("):
-                target = readDTL(string[i+1:],target)
+                string = string[i+1:]
+                target,string = readDTL(string,target)
+                if len(string)>2:
+                    root, string = readDTL(string,root)
             elif(string[i]==")"):
                 if(string[i+1]=="("):
-                    root = readDTL(string[i+2:],root)
-            return root  
+                    string = string[i+2:]
+                    root,string = readDTL(string,root)
+                else:
+                    string = string[i+1:]
+            return root,string  
 
 
 def readRootDTL(string):
     for i in range(2, len(string)-1):
         if(string[i]=="("):
             root = id3.Vertex(string[2:i])
-            root = readDTL(string[i+1:], root)
+            root,string = readDTL(string[i+1:], root)
             break
         elif (string[i]==")"):
-            root = id3.Vertex(string[2:i])
+            root,string = id3.Vertex(string[2:i])
             break
-    if string[len(string)-1]==")" and string[len(string)-2]==")":
-        j = len(string)-3
-        while(string[j]!="("):
-            j -= 1
-        data = string[j+1:len(string)-2].split(",")
-        target = id3.Vertex(data[1])
-        edge = id3.Edge(data[0],target)
-        root.add_edge(edge)
     return root
 
 
