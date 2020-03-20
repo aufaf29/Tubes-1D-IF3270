@@ -1,0 +1,1 @@
+(,petal.length(>= 3.0,sepal.length(>= 4.9,petal.width(>= 1.0,sepal.width(< 2.2,Versicolor)(>= 2.2,Virginica))))(< 3.0,Setosa))

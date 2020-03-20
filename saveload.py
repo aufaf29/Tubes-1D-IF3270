@@ -11,8 +11,8 @@ def writeDTL(tree, f):
     else:
         f.write(")")
 
-def saveDTL(tree):
-    f= open("DTL.txt","w+")
+def saveDTL(tree, filename):
+    f= open(filename,"w+")
     f.write("(,")
     writeDTL(tree, f)
     f.close()  
@@ -47,15 +47,15 @@ def readRootDTL(string):
     return root
 
 
-def loadDTL():
-    f=open("DTL.txt", "r")
+def loadDTL(filename):
+    f=open(filename, "r")
     if f.mode == "r":
         contents = f.read()
         tree = readRootDTL(contents)
     return tree
 
-def saveMLP(model):
-    f= open("MLP.txt","w+")
+def saveMLP(model, filename):
+    f= open(filename,"w+")
     # save input layer (number of input perceptron)
     f.write("I\n")
     f.write(str(len(model.layer_list[0].perceptron_list))+"\n")
@@ -74,9 +74,9 @@ def saveMLP(model):
             f.write(str(weight)+",")
     f.close()  
 
-def loadMLP():
+def loadMLP(filename):
     model = mlp.Model()
-    f=open("MLP.txt", "r")
+    f=open(filename, "r")
     content = f.readlines()
     i=0
     # initialize input layer
