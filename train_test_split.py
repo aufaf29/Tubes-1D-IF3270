@@ -64,4 +64,4 @@ def MLP(df, num_perceptrons_in_layer, max_iteration, error_threshold, learning_r
     print('Akurasi :')
     print(result_accuracy)
     print('Confussion Matrix untuk Virginica, Versicolor, Setosa :')
-    print(ConfusionMatrixID3(result_model, test_iris))
+    print(ConfusionMatrixMLP(result_model, test_iris))
