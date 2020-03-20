@@ -99,8 +99,14 @@ def get_global_entropy(data):
 def get_data_certain_value (dataframe, attribute_name, value_name):
     new_dataframe = dataframe.copy()
     for i in range (len(new_dataframe)):
-        if(new_dataframe[attribute_name][i] != value_name):
-            new_dataframe = new_dataframe.drop(i)
+        print(new_dataframe[attribute_name][i], "---", value_name)
+        if (isinstance(new_dataframe[attribute_name][i], (str))):
+            if(new_dataframe[attribute_name][i] != value_name):
+                new_dataframe = new_dataframe.drop(i)
+        else:
+            comp_string = str(new_dataframe[attribute_name][i]) + " " + value_name
+            if(not eval(comp_string)):
+                new_dataframe = new_dataframe.drop(i)
     new_dataframe = new_dataframe.drop(attribute_name, axis=1)
     new_dataframe = new_dataframe.reset_index(drop = True)
     new_data = Data(new_dataframe)
@@ -447,7 +453,7 @@ def prune(tree, validation_data, validation_dataframe, rules, isContinuous):
                         del temp_rule[list(temp_rule.keys())[j]]
                 if (len(list(temp_rule.keys())) != 0):
                     iteration_data = deepcopy(pruning_data)
-                    iteration_dataframe = deepcopy(pruning_dataframe)
+                    iteration_dataframe = pruning_dataframe.copy()
                     for key in list(temp_rule.keys()):
                         if (key != 'result'):
                             iteration_data, iteration_dataframe = get_data_certain_value(iteration_dataframe, key, temp_rule[key])
